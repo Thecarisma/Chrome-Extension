@@ -3,9 +3,10 @@ let commentCount = 0;
 let shareCount = 0;
 let mylatitude = null;
 let mylongitude = null;
+let dataArray = [];
 
 (function () {
-  "use strict";
+  ("use strict");
 
   const successCallback = (position) => {
     if (position.coords.latitude) {
@@ -140,11 +141,21 @@ let mylongitude = null;
       }
     });
 
-    function extractContent(s) {
-      var span = document.createElement("span");
-      span.innerHTML = s;
-      return span.textContent || span.innerText;
-    }
+    chrome.storage.sync.get("comment_filter", function (comment_filter_status) {
+      if (comment_filter_status.comment_filter > 0) {
+        commentCount = parseInt(comment_filter_status.comment_filter);
+      } else {
+        commentCount = 0;
+      }
+    });
+
+    chrome.storage.sync.get("share_filter", function (share_filter_status) {
+      if (share_filter_status.share_filter > 0) {
+        shareCount = parseInt(share_filter_status.share_filter);
+      } else {
+        shareCount = 0;
+      }
+    });
 
     e.dataset.blocked = "non-sponsored";
     return possibleSponsoredTextQueries.some((query) => {
@@ -157,21 +168,173 @@ let mylongitude = null;
             (sponsoredText) => visibleText.indexOf(sponsoredText) !== -1
           )
         ) {
+          let likesOfOne,
+            commentsOfOne,
+            sharesOfOne,
+            actualLikesOfOne,
+            actualCommentsOfOne,
+            actualSharesOfOne,
+            mediaUrl = {};
+
           e.dataset.blocked = "sponsored";
           console.info(
             `AD Shown (query='${query}', visibleText='${visibleText}')`,
             [e]
           );
           console.log("HIDE IS SPONCERED");
+          // e.style.display = "none";
 
-          let textContentOfAdvertisement = extractContent(e.innerHTML).replace(
-            /^[^ ][\w\W ]*[^ ]/g,
-            ""
+          // console.log(e);
+          let allSpans = e.getElementsByTagName("span");
+          let allVideos = e.getElementsByTagName("video");
+          let allImages = e.getElementsByTagName("img");
+
+          let allSpansArray = Array.from(allSpans);
+          let allVideosArray = Array.from(allVideos);
+          let allImagesArray = Array.from(allImages);
+
+          if (allVideosArray.length > 0) {
+            console.log("VIDEO K HO TA ABAAAAAAAA");
+            console.log(allVideosArray[0]);
+            mediaUrl = {
+              type: "VIDEO",
+              url: "skanda",
+            };
+          } else {
+            console.log("IMAGE K HO TA ABAAAAAAAA");
+            console.log(allImagesArray[0].getAttribute("src"));
+            mediaUrl = {
+              type: "IMAGE",
+              url: allImagesArray[0].getAttribute("src"),
+            };
+          }
+
+          let requiredInfoSpan = allSpansArray.slice(
+            allSpansArray.length - 30,
+            allSpansArray.length
           );
 
-          // e.style.display = "none";
-          console.log(e);
-          console.log(textContentOfAdvertisement);
+          for (let index = 0; index < requiredInfoSpan.length - 1; index++) {
+            if (
+              parseFloat(requiredInfoSpan[index].innerText) !== NaN &&
+              parseFloat(requiredInfoSpan[index].innerText) ===
+                parseFloat(requiredInfoSpan[index + 1].innerText)
+            ) {
+              likesOfOne = parseFloat(requiredInfoSpan[index].innerText);
+
+              if (!likesOfOne || likesOfOne === NaN) {
+                likesOfOne = 0;
+              }
+
+              if (
+                requiredInfoSpan[index].innerText.includes("k") ||
+                requiredInfoSpan[index].innerText.includes("K")
+              ) {
+                actualLikesOfOne =
+                  parseFloat(requiredInfoSpan[index].innerText) * 1000;
+              } else if (
+                requiredInfoSpan[index].innerText.includes("M") ||
+                requiredInfoSpan[index].innerText.includes("m")
+              ) {
+                actualLikesOfOne =
+                  parseFloat(requiredInfoSpan[index].innerText) * 1000000;
+              } else {
+                actualLikesOfOne = likesOfOne;
+              }
+
+              break;
+            }
+          }
+
+          for (let index = 0; index < requiredInfoSpan.length - 1; index++) {
+            if (requiredInfoSpan[index].innerText.includes("Comments")) {
+              commentsOfOne = parseFloat(requiredInfoSpan[index].innerText);
+
+              if (!commentsOfOne || commentsOfOne === NaN) {
+                commentsOfOne = 0;
+              }
+
+              if (
+                requiredInfoSpan[index].innerText.split(" ")[0].includes("k") ||
+                requiredInfoSpan[index].innerText.split(" ")[0].includes("K")
+              ) {
+                console.log("first if");
+                actualCommentsOfOne = commentsOfOne * 1000;
+              } else if (
+                requiredInfoSpan[index].innerText.split(" ")[0].includes("m") ||
+                requiredInfoSpan[index].innerText.split(" ")[0].includes("M")
+              ) {
+                console.log("second else if");
+                actualCommentsOfOne = commentsOfOne * 1000000;
+              } else {
+                console.log("Final else");
+                actualCommentsOfOne = commentsOfOne;
+              }
+
+              break;
+            }
+          }
+
+          for (let index = 0; index < requiredInfoSpan.length - 1; index++) {
+            if (requiredInfoSpan[index].innerText.includes("Shares")) {
+              sharesOfOne = parseFloat(requiredInfoSpan[index].innerText);
+
+              if (!sharesOfOne || sharesOfOne === NaN) {
+                sharesOfOne = 0;
+              }
+
+              if (
+                requiredInfoSpan[index].innerText.split(" ")[0].includes("k") ||
+                requiredInfoSpan[index].innerText.split(" ")[0].includes("K")
+              ) {
+                actualSharesOfOne = sharesOfOne * 1000;
+              } else if (
+                requiredInfoSpan[index].innerText.split(" ")[0].includes("m") ||
+                requiredInfoSpan[index].innerText.split(" ")[0].includes("M")
+              ) {
+                actualSharesOfOne = sharesOfOne * 1000000;
+              } else {
+                actualSharesOfOne = sharesOfOne;
+              }
+
+              break;
+            }
+          }
+
+          if (
+            actualLikesOfOne < interactionCount ||
+            actualCommentsOfOne < commentCount ||
+            actualSharesOfOne < shareCount
+          ) {
+            e.style.display = "none";
+          }
+
+          if (!actualLikesOfOne) {
+            actualLikesOfOne = 0;
+          }
+
+          if (!actualCommentsOfOne) {
+            actualCommentsOfOne = 0;
+          }
+
+          if (!actualSharesOfOne) {
+            actualSharesOfOne = 0;
+          }
+
+          dataArray = [
+            ...dataArray,
+            {
+              likes: actualLikesOfOne,
+              comments: actualCommentsOfOne,
+              shares: actualSharesOfOne,
+              location: {
+                mylatitude,
+                mylongitude,
+              },
+            },
+          ];
+
+          console.log(dataArray);
 
           return true;
         } else {
