@@ -1,0 +1,8 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "prettier.jsxBracketSameLine": true,
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  }
+}
