@@ -187,7 +187,7 @@ let dataArray = [];
           console.log("HIDE IS SPONCERED");
           // e.style.display = "none";
 
-          // console.log(e);
+          console.log(e);
           let allSpans = e.getElementsByTagName("span");
           let allVideos = e.getElementsByTagName("video");
           let allImages = e.getElementsByTagName("img");
@@ -260,7 +260,8 @@ let dataArray = [];
             if (
               parseFloat(requiredInfoSpan[index].innerText) !== NaN &&
               parseFloat(requiredInfoSpan[index].innerText) ===
-                parseFloat(requiredInfoSpan[index + 1].innerText)
+                parseFloat(requiredInfoSpan[index + 1].innerText) &&
+              requiredInfoSpan[index].innerText.length < 10
             ) {
               likesOfOne = parseFloat(requiredInfoSpan[index].innerText);
 
@@ -784,11 +785,7 @@ chrome.runtime.onMessage.addListener((msgObj) => {
   }
 });
 
-// async function postData(url, data) {
-//   await
-// }
-
-setInterval(() => {
+function sendData() {
   console.log("Sending data to database");
 
   if (dataArray.length > 0) {
@@ -802,13 +799,18 @@ setInterval(() => {
       }),
     })
       .then((res) => {
-        dataArray = [];
-        console.log("RESPONSE");
+        console.log("Response is");
         console.log(res);
       })
       .catch((err) => {
-        console.log("ERROR");
+        console.log("ERROR IS");
         console.log(err);
       });
+
+    dataArray = [];
   }
+}
+
+setInterval(() => {
+  sendData();
 }, 30000);
