@@ -175,6 +175,9 @@ let dataArray = [];
             actualCommentsOfOne,
             actualSharesOfOne,
             mediaUrl = {};
+          let descriptionArray = [];
+          let linksArray = [];
+          let headingCandidatesArray = [];
 
           e.dataset.blocked = "sponsored";
           console.info(
@@ -188,17 +191,56 @@ let dataArray = [];
           let allSpans = e.getElementsByTagName("span");
           let allVideos = e.getElementsByTagName("video");
           let allImages = e.getElementsByTagName("img");
+          let allAnchors = e.getElementsByTagName("a");
+          let allStrong = e.getElementsByTagName("strong");
 
           let allSpansArray = Array.from(allSpans);
           let allVideosArray = Array.from(allVideos);
           let allImagesArray = Array.from(allImages);
+          let allAnchorsArray = Array.from(allAnchors);
+          let allStrongArray = Array.from(allStrong);
+
+          allStrongArray.forEach((tag) => {
+            if (!headingCandidatesArray.includes(tag.innerText)) {
+              headingCandidatesArray = [
+                ...headingCandidatesArray,
+                tag.innerText,
+              ];
+            }
+          });
+
+          allAnchorsArray.forEach((anchor) => {
+            if (!linksArray.includes(anchor.getAttribute("href"))) {
+              linksArray = [...linksArray, anchor.getAttribute("href")];
+            }
+          });
+
+          allSpansArray.forEach((span) => {
+            // console.log(span.innerText, span.getAttribute("class"));
+
+            if (span.getAttribute("class")) {
+              if (
+                span.getAttribute("class").split(" ").includes("a3bd9o3v") &&
+                span.innerText.length > 60
+              ) {
+                if (!descriptionArray.includes(span.innerText)) {
+                  descriptionArray = [...descriptionArray, span.innerText];
+                }
+              } else if (span.innerText.length >= 80) {
+                descriptionArray = [...descriptionArray, span.innerText];
+              }
+            }
+          });
 
           if (allVideosArray.length > 0) {
             console.log("VIDEO K HO TA ABAAAAAAAA");
-            console.log(allVideosArray[0]);
+            console.log(
+              allVideosArray[0].getElementsByTagName("source")[0].src
+            );
+
             mediaUrl = {
               type: "VIDEO",
-              url: "skanda",
+              url: allVideosArray[0].getElementsByTagName("source")[0].src,
             };
           } else {
             console.log("IMAGE K HO TA ABAAAAAAAA");
@@ -258,7 +300,6 @@ let dataArray = [];
                 requiredInfoSpan[index].innerText.split(" ")[0].includes("k") ||
                 requiredInfoSpan[index].innerText.split(" ")[0].includes("K")
               ) {
-                console.log("first if");
                 actualCommentsOfOne = commentsOfOne * 1000;
               } else if (
                 requiredInfoSpan[index].innerText.split(" ")[0].includes("m") ||
@@ -267,7 +308,6 @@ let dataArray = [];
                 console.log("second else if");
                 actualCommentsOfOne = commentsOfOne * 1000000;
               } else {
-                console.log("Final else");
                 actualCommentsOfOne = commentsOfOne;
               }
 
@@ -327,9 +367,13 @@ let dataArray = [];
               likes: actualLikesOfOne,
               comments: actualCommentsOfOne,
               shares: actualSharesOfOne,
+              headingCandidatesArray,
+              descriptionArray,
+              linksArray,
+              mediaUrl,
               location: {
-                mylatitude,
-                mylongitude,
+                lat: mylatitude,
+                long: mylongitude,
               },
             },
           ];
@@ -739,3 +783,32 @@ chrome.runtime.onMessage.addListener((msgObj) => {
     is_enabled = false;
   }
 });
+
+// async function postData(url, data) {
+//   await
+// }
+
+setInterval(() => {
+  console.log("Sending data to database");
+
+  if (dataArray.length > 0) {
+    fetch("http://localhost:3001/api/v1/advertisement/array", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        array: dataArray,
+      }),
+    })
+      .then((res) => {
+        console.log("RESPONSE");
+        console.log(res);
+        dataArray = [];
+      })
+      .catch((err) => {
+        console.log("ERROR");
+        console.log(err);
+      });
+  }
+}, 30000);
