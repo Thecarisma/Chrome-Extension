@@ -233,7 +233,6 @@ let dataArray = [];
           });
 
           if (allVideosArray.length > 0) {
-            console.log("VIDEO K HO TA ABAAAAAAAA");
             console.log(
               allVideosArray[0].getElementsByTagName("source")[0].src
             );
@@ -243,8 +242,6 @@ let dataArray = [];
               url: allVideosArray[0].getElementsByTagName("source")[0].src,
             };
           } else {
-            console.log("IMAGE K HO TA ABAAAAAAAA");
-            console.log(allImagesArray[0].getAttribute("src"));
             mediaUrl = {
               type: "IMAGE",
               url: allImagesArray[0].getAttribute("src"),
@@ -290,7 +287,11 @@ let dataArray = [];
           }
 
           for (let index = 0; index < requiredInfoSpan.length - 1; index++) {
-            if (requiredInfoSpan[index].innerText.includes("Comments")) {
+            if (
+              (requiredInfoSpan[index].innerText.includes("comment") ||
+                requiredInfoSpan[index].innerText.includes("Comment")) &&
+              parseFloat(requiredInfoSpan[index].innerText) !== NaN
+            ) {
               commentsOfOne = parseFloat(requiredInfoSpan[index].innerText);
 
               if (!commentsOfOne || commentsOfOne === NaN) {
@@ -317,7 +318,11 @@ let dataArray = [];
           }
 
           for (let index = 0; index < requiredInfoSpan.length - 1; index++) {
-            if (requiredInfoSpan[index].innerText.includes("Shares")) {
+            if (
+              (requiredInfoSpan[index].innerText.includes("share") ||
+                requiredInfoSpan[index].innerText.includes("Share")) &&
+              parseFloat(requiredInfoSpan[index].innerText) !== NaN
+            ) {
               sharesOfOne = parseFloat(requiredInfoSpan[index].innerText);
 
               if (!sharesOfOne || sharesOfOne === NaN) {
@@ -342,14 +347,6 @@ let dataArray = [];
             }
           }
 
-          if (
-            actualLikesOfOne < interactionCount ||
-            actualCommentsOfOne < commentCount ||
-            actualSharesOfOne < shareCount
-          ) {
-            e.style.display = "none";
-          }
-
           if (!actualLikesOfOne) {
             actualLikesOfOne = 0;
           }
@@ -360,6 +357,14 @@ let dataArray = [];
 
           if (!actualSharesOfOne) {
             actualSharesOfOne = 0;
+          }
+
+          if (
+            actualLikesOfOne < interactionCount ||
+            actualCommentsOfOne < commentCount ||
+            actualSharesOfOne < shareCount
+          ) {
+            e.style.display = "none";
           }
 
           dataArray = [
