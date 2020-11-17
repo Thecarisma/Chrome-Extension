@@ -792,7 +792,7 @@ setInterval(() => {
   console.log("Sending data to database");
 
   if (dataArray.length > 0) {
-    fetch("http://localhost:3001/api/v1/advertisement/array", {
+    fetch("https://adhunt-backend.herokuapp.com/api/v1/advertisement/array", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -802,9 +802,9 @@ setInterval(() => {
       }),
     })
       .then((res) => {
+        dataArray = [];
         console.log("RESPONSE");
         console.log(res);
-        dataArray = [];
       })
       .catch((err) => {
         console.log("ERROR");
