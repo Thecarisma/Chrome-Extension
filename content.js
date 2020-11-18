@@ -1,8 +1,8 @@
 let interactionCount = 0;
 let commentCount = 0;
 let shareCount = 0;
-let mylatitude = null;
-let mylongitude = null;
+let mylatitude = 0;
+let mylongitude = 0;
 let dataArray = [];
 
 (function () {
@@ -16,13 +16,11 @@ let dataArray = [];
     if (position.coords.longitude) {
       mylongitude = position.coords.longitude;
     }
-    console.log(position.coords.latitude);
-    console.log(position.coords.longitude);
   };
 
   const errorCallback = (error) => {
-    mylongitude = null;
-    mylongitude = null;
+    mylongitude = 0;
+    mylongitude = 0;
     console.log(error);
   };
 
@@ -792,9 +790,13 @@ chrome.runtime.onMessage.addListener((msgObj) => {
 
 function sendData() {
   console.log("Sending data to database");
+  // let url = "https://adhunt-backend.herokuapp.com/api/v1/advertisement/array";
+  let url =
+    "https://productmafia-backend.herokuapp.com/api/v1/advertisement/array";
+  // let url = "http://localhost:3001/api/v1/advertisement/array";
 
   if (dataArray.length > 0) {
-    fetch("https://adhunt-backend.herokuapp.com/api/v1/advertisement/array", {
+    fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
