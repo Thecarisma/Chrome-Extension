@@ -21,7 +21,6 @@ let dataArray = [];
   const errorCallback = (error) => {
     mylongitude = 0;
     mylongitude = 0;
-    console.log(error);
   };
 
   navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
@@ -178,14 +177,9 @@ let dataArray = [];
           let headingCandidatesArray = [];
 
           e.dataset.blocked = "sponsored";
-          console.info(
-            `AD Shown (query='${query}', visibleText='${visibleText}')`,
-            [e]
-          );
-          console.log("HIDE IS SPONCERED");
+
           // e.style.display = "none";
 
-          console.log(e);
           let allSpans = e.getElementsByTagName("span");
           let allVideos = e.getElementsByTagName("video");
           let allImages = e.getElementsByTagName("img");
@@ -231,9 +225,9 @@ let dataArray = [];
           });
 
           if (allVideosArray.length > 0) {
-            console.log(
-              allVideosArray[0].getElementsByTagName("source")[0].src
-            );
+            // console.log(
+            //   allVideosArray[0].getElementsByTagName("source")[0].src
+            // );
 
             mediaUrl = {
               type: "VIDEO",
@@ -305,7 +299,7 @@ let dataArray = [];
                 requiredInfoSpan[index].innerText.split(" ")[0].includes("m") ||
                 requiredInfoSpan[index].innerText.split(" ")[0].includes("M")
               ) {
-                console.log("second else if");
+                // console.log("second else if");
                 actualCommentsOfOne = commentsOfOne * 1000000;
               } else {
                 actualCommentsOfOne = commentsOfOne;
@@ -382,7 +376,7 @@ let dataArray = [];
             },
           ];
 
-          console.log(dataArray);
+          // console.log(dataArray);
 
           return true;
         } else {
@@ -789,7 +783,7 @@ chrome.runtime.onMessage.addListener((msgObj) => {
 });
 
 function sendData() {
-  console.log("Sending data to database");
+  // console.log("Sending data to database");
   // let url = "https://adhunt-backend.herokuapp.com/api/v1/advertisement/array";
   let url =
     "https://productmafia-backend.herokuapp.com/api/v1/advertisement/array";
@@ -806,12 +800,12 @@ function sendData() {
       }),
     })
       .then((res) => {
-        console.log("Response is");
-        console.log(res);
+        // console.log("Response is");
+        // console.log(res);
       })
       .catch((err) => {
-        console.log("ERROR IS");
-        console.log(err);
+        // console.log("ERROR IS");
+        // console.log(err);
       });
 
     dataArray = [];
