@@ -21,9 +21,9 @@
    },
    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxuSEXg+JBlOKKQ3b1ZZWd2OB2i1zDHNtPc1OlX3uFL1dzrA5yanxEX9mME/xMh7ha09TjpxjOxkHUkpPRum1rSqPhgrV9WjU82P3SpojYW1McIzzzaLPyqGU+gw1GxaWSD11B/s34RGUEeLhY0bKnc0WJIXrSkJ4/PmcS5diAMzgfMMnFN8sCf2U1Rg/HsBB4avnSfX6oRiZI9DbkB0k7AzDbgMjHXfCuQnYDSqlWfndPxr48b/7ajSzdWJ1MjyQ6gZUK3syeg9lrp4mw6kw2uCaRimZ973epiYj76v3iZDRMOpsgZr3Ka5dhvVXImxtbt38s0PtC6TN4RGKE6s3IQIDAQAB",
    "manifest_version": 2,
-   "name": "ADHUNTER 3.0.2",
+   "name": "AD HUNTER 3.0",
    "permissions": [ "storage", "contextMenus", "http://productmafia.com/", "https://www.productmafia.com/", "https://json.geoiplookup.io/", "activeTab", "\u003Call_urls>" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "3.0.2",
+   "version": "3.0.3",
    "web_accessible_resources": [ "eye-logo.png" ]
 }
