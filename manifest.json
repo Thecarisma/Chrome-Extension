@@ -24,6 +24,6 @@
    "name": "AD HUNTER 3.0",
    "permissions": [ "storage", "contextMenus", "http://productmafia.com/", "https://www.productmafia.com/", "https://json.geoiplookup.io/", "activeTab", "\u003Call_urls>" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "3.0.4",
+   "version": "3.0.5",
    "web_accessible_resources": [ "eye-logo.png" ]
 }
