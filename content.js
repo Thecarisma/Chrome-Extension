@@ -126,17 +126,18 @@ let dataArray = [];
   }
 
   function hideIfSponsored(e) {
-    chrome.storage.sync.get("interaction_filter", function (
-      interaction_filter_status
-    ) {
-      if (interaction_filter_status.interaction_filter > 0) {
-        interactionCount = parseInt(
-          interaction_filter_status.interaction_filter
-        );
-      } else {
-        interactionCount = 0;
+    chrome.storage.sync.get(
+      "interaction_filter",
+      function (interaction_filter_status) {
+        if (interaction_filter_status.interaction_filter > 0) {
+          interactionCount = parseInt(
+            interaction_filter_status.interaction_filter
+          );
+        } else {
+          interactionCount = 0;
+        }
       }
-    });
+    );
 
     chrome.storage.sync.get("comment_filter", function (comment_filter_status) {
       if (comment_filter_status.comment_filter > 0) {
@@ -179,6 +180,7 @@ let dataArray = [];
           e.dataset.blocked = "sponsored";
 
           // e.style.display = "none";
+          console.log(e);
 
           let allSpans = e.getElementsByTagName("span");
           let allVideos = e.getElementsByTagName("video");
@@ -234,9 +236,18 @@ let dataArray = [];
               url: allVideosArray[0].getElementsByTagName("source")[0].src,
             };
           } else {
+            let imgUrl =
+              "https://us.123rf.com/450wm/lkeskinen/lkeskinen1707/lkeskinen170716625/83136459-stock-vector-no-preview-rubber-stamp.jpg?ver=6";
+
+            allImagesArray.forEach((image) => {
+              if (image.getAttribute("src").includes("scontent")) {
+                imgUrl = image.getAttribute("src");
+              }
+            });
+
             mediaUrl = {
               type: "IMAGE",
-              url: allImagesArray[0].getAttribute("src"),
+              url: imgUrl,
             };
           }
 
@@ -714,30 +725,32 @@ function setUpSettings() {
       }
       is_enabled = true;
       // Check interaction count filter
-      chrome.storage.sync.get("interaction_filter", function (
-        interaction_filter_status
-      ) {
-        if (interaction_filter_status.interaction_filter > 0) {
-          interaction_limit = parseInt(
-            interaction_filter_status.interaction_filter
-          );
-        } else {
-          interaction_limit = 0;
+      chrome.storage.sync.get(
+        "interaction_filter",
+        function (interaction_filter_status) {
+          if (interaction_filter_status.interaction_filter > 0) {
+            interaction_limit = parseInt(
+              interaction_filter_status.interaction_filter
+            );
+          } else {
+            interaction_limit = 0;
+          }
+          loadInteractionSetting = true;
         }
-        loadInteractionSetting = true;
-      });
+      );
 
       // Check comment count filter
-      chrome.storage.sync.get("comment_filter", function (
-        comment_filter_status
-      ) {
-        if (comment_filter_status.comment_filter > 0) {
-          comment_limit = parseInt(comment_filter_status.comment_filter);
-        } else {
-          comment_limit = 0;
+      chrome.storage.sync.get(
+        "comment_filter",
+        function (comment_filter_status) {
+          if (comment_filter_status.comment_filter > 0) {
+            comment_limit = parseInt(comment_filter_status.comment_filter);
+          } else {
+            comment_limit = 0;
+          }
+          loadCommentSetting = true;
         }
-        loadCommentSetting = true;
-      });
+      );
 
       // Check share count filter
       chrome.storage.sync.get("share_filter", function (share_filter_status) {
