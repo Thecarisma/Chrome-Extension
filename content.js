@@ -180,7 +180,6 @@ let dataArray = [];
           e.dataset.blocked = "sponsored";
 
           // e.style.display = "none";
-          console.log(e);
 
           let allSpans = e.getElementsByTagName("span");
           let allVideos = e.getElementsByTagName("video");
