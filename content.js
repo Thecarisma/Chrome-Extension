@@ -171,27 +171,55 @@ let dataArray = [];
             sharesOfOne,
             actualLikesOfOne,
             actualCommentsOfOne,
-            actualSharesOfOne,
-            mediaUrl = {};
+            actualSharesOfOne;
+
           let descriptionArray = [];
           let linksArray = [];
           let headingCandidatesArray = [];
+          let iconImage = "";
+          let imgUrlArray = [];
+          let videoUrl = "";
+          let actualSite = "";
 
           e.dataset.blocked = "sponsored";
 
           // e.style.display = "none";
+          // console.log(e);
 
           let allSpans = e.getElementsByTagName("span");
           let allVideos = e.getElementsByTagName("video");
+
           let allImages = e.getElementsByTagName("img");
           let allAnchors = e.getElementsByTagName("a");
           let allStrong = e.getElementsByTagName("strong");
 
           let allSpansArray = Array.from(allSpans);
           let allVideosArray = Array.from(allVideos);
+
+          // console.log("THIS IS VIDEO HAI GUYS");
+          // console.log(allVideos);
+          // console.log(allVideos.length);
+
           let allImagesArray = Array.from(allImages);
           let allAnchorsArray = Array.from(allAnchors);
           let allStrongArray = Array.from(allStrong);
+
+          setTimeout(() => {
+            if (e.getElementsByTagName("video").length > 0) {
+              videoUrl = e.getElementsByTagName("video")[0].getAttribute("src");
+            }
+          }, 1000);
+
+          if (e.querySelectorAll("div div a div div div span").length > 0) {
+            actualSite = e.querySelectorAll("div div a div div div span")[0]
+              .innerText;
+          }
+
+          if (document.getElementsByTagName("image").length > 0) {
+            iconImage = e
+              .getElementsByTagName("image")[0]
+              .getAttribute("xlink:href");
+          }
 
           allStrongArray.forEach((tag) => {
             if (!headingCandidatesArray.includes(tag.innerText)) {
@@ -226,28 +254,15 @@ let dataArray = [];
           });
 
           if (allVideosArray.length > 0) {
-            // console.log(
-            //   allVideosArray[0].getElementsByTagName("source")[0].src
-            // );
+            videoUrl = allVideos[0].getAttribute("src");
+          }
 
-            mediaUrl = {
-              type: "VIDEO",
-              url: allVideosArray[0].getElementsByTagName("source")[0].src,
-            };
-          } else {
-            let imgUrl =
-              "https://us.123rf.com/450wm/lkeskinen/lkeskinen1707/lkeskinen170716625/83136459-stock-vector-no-preview-rubber-stamp.jpg?ver=6";
-
+          if (allImagesArray.length > 0) {
             allImagesArray.forEach((image) => {
               if (image.getAttribute("src").includes("scontent")) {
-                imgUrl = image.getAttribute("src");
+                imgUrlArray.push(image.getAttribute("src"));
               }
             });
-
-            mediaUrl = {
-              type: "IMAGE",
-              url: imgUrl,
-            };
           }
 
           let requiredInfoSpan = allSpansArray.slice(
@@ -368,23 +383,29 @@ let dataArray = [];
           ) {
             e.style.display = "none";
           }
+          // new icon image, images array, video url
 
-          dataArray = [
-            ...dataArray,
-            {
-              likes: actualLikesOfOne,
-              comments: actualCommentsOfOne,
-              shares: actualSharesOfOne,
-              headingCandidatesArray,
-              descriptionArray,
-              linksArray,
-              mediaUrl,
-              location: {
-                lat: mylatitude,
-                long: mylongitude,
+          setTimeout(() => {
+            dataArray = [
+              ...dataArray,
+              {
+                likes: actualLikesOfOne,
+                comments: actualCommentsOfOne,
+                shares: actualSharesOfOne,
+                headingCandidatesArray,
+                descriptionArray,
+                linksArray,
+                imgUrlArray,
+                videoUrl,
+                iconImage,
+                actualSite,
+                location: {
+                  lat: mylatitude,
+                  long: mylongitude,
+                },
               },
-            },
-          ];
+            ];
+          }, 1500);
 
           // console.log(dataArray);
 
@@ -794,9 +815,7 @@ chrome.runtime.onMessage.addListener((msgObj) => {
   }
 });
 
-function sendData() {
-  // console.log("Sending data to database");
-  // let url = "https://adhunt-backend.herokuapp.com/api/v1/advertisement/array";
+async function sendData() {
   let url =
     "https://productmafia-backend.herokuapp.com/api/v1/advertisement/array";
   // let url = "http://localhost:3001/api/v1/advertisement/array";
