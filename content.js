@@ -231,10 +231,17 @@ let dataArray = [];
           });
 
           allAnchorsArray.forEach((anchor) => {
-            if (!linksArray.includes(anchor.getAttribute("href"))) {
-              linksArray = [...linksArray, anchor.getAttribute("href")];
+            let href = anchor.getAttribute("href");
+            if (href) {
+              let url = new URL(href);
+              href = (url.searchParams.get("u") || href);
+            }
+            if (!linksArray.includes(href)) {
+              linksArray = [...linksArray, href];
             }
           });
+          console.log(linksArray)
+          return
 
           allSpansArray.forEach((span) => {
             // console.log(span.innerText, span.getAttribute("class"));
@@ -820,7 +827,8 @@ async function sendData() {
     "https://productmafia-backend.herokuapp.com/api/v1/advertisement/array";
   // let url = "http://localhost:3001/api/v1/advertisement/array";
 
-  if (dataArray.length > 0) {
+  console.log(dataArray);
+  /*if (dataArray.length > 0) {
     fetch(url, {
       method: "POST",
       headers: {
@@ -840,7 +848,7 @@ async function sendData() {
       });
 
     dataArray = [];
-  }
+  }*/
 }
 
 setInterval(() => {
